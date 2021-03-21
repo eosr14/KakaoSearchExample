@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name">KakaoSearchExample</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="main_search_hint">검색어를 입력해주세요…</string>
+    <string name="main_search_term_empty">검색어를 입력해주세요.</string>
+    <string name="search">검색</string>
+    <string name="sort">정렬</string>
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="api_failed_message">정보를 불러오는 데 실패하였습니다.</string>
+    <string name="blog">BLOG</string>
+    <string name="cafe">CAFE</string>
+    <string name="today">오늘</string>
+    <string name="yesterday">어제</string>
 </resources>
