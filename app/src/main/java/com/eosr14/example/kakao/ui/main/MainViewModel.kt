@@ -30,18 +30,33 @@ enum class SearchSort(val sort: String) {
 }
 
 class MainViewModel(
-        private val context: Context?,
-        private val service: KaKaoService?
+    private val context: Context?,
+    private val service: KaKaoService?
 ) : BaseViewModel() {
 
     private val _currentFilter = MutableLiveData(SearchFilter.ALL.type)
-    val currentFilter: LiveData<String> = _currentFilter
+    val currentFilter: LiveData<String> get() = _currentFilter
 
     private val _currentSort = MutableLiveData(SearchSort.TITLE.sort)
-    val currentSort: LiveData<String> = _currentSort
+    val currentSort: LiveData<String> get() = _currentSort
 
     private val _searchList = MutableLiveData<ArrayList<Document>>(arrayListOf())
-    val searchList: LiveData<ArrayList<Document>> = _searchList
+    val searchList: LiveData<ArrayList<Document>> get() = _searchList
+
+    private val _page = MutableLiveData(1)
+    val page: LiveData<Int> get() = _page
+
+    private val _isEnd = MutableLiveData(false)
+    val isEnd: LiveData<Boolean> get() = _isEnd
+
+    private val _totalCount = MutableLiveData(0)
+    val totalCount: LiveData<Int> get() = _totalCount
+
+    private val _query = MutableLiveData("")
+    val query: LiveData<String> get() = _query
+
+    private val _isFirst = MutableLiveData(false)
+    val isFirst: LiveData<Boolean> get() = _isFirst
 
     var sortList = listOf<String>()
     var filterList = listOf<String>()
@@ -65,25 +80,40 @@ class MainViewModel(
     }
 
     fun getBlog(
-            query: String,
-            sort: String = TYPE_FILTER_ACCURACY,
-            page: Int,
-            size: Int = DEFAULT_PAGE_SIZE
+        query: String,
+        sort: String = TYPE_FILTER_ACCURACY,
+        size: Int = DEFAULT_PAGE_SIZE,
+        isFirst: Boolean
     ) {
+        _isFirst.value = isFirst
+        _searchList.value = arrayListOf()
+
+        when (isFirst) {
+            true -> _page.value = 1
+            false -> _page.value = _page.value?.plus(1)
+        }
+
         service?.let { service ->
-            service.getBlog(query, sort, page, size)
+            _page.value?.let { page ->
+                service.getBlog(query, sort, page, size)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : DisposableSingleObserver<SearchModel>() {
                         override fun onSuccess(t: SearchModel) {
-                            _searchList.value?.apply {
-                                clear()
+                            _query.value = query
+                            _totalCount.value = t.meta.totalCount
 
+                            when (isFirst) {
+                                true -> _isEnd.value = false
+                                false -> _isEnd.value = t.meta.isEnd
+                            }
+
+                            _searchList.value?.apply {
                                 addAll(
-                                        when (_currentSort.value) {
-                                            SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
-                                            else -> t.documents.sortedBy { it.title }
-                                        }
+                                    when (_currentSort.value) {
+                                        SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
+                                        else -> t.documents.sortedBy { it.title }
+                                    }
                                 )
                             }
                             _searchList.notifyObserver()
@@ -95,29 +125,45 @@ class MainViewModel(
                             }
                         }
                     })
+            }
         }
     }
 
     fun getCafe(
-            query: String,
-            sort: String = TYPE_FILTER_ACCURACY,
-            page: Int,
-            size: Int = DEFAULT_PAGE_SIZE
+        query: String,
+        sort: String = TYPE_FILTER_ACCURACY,
+        size: Int = DEFAULT_PAGE_SIZE,
+        isFirst: Boolean
     ) {
+        _isFirst.value = isFirst
+        _searchList.value = arrayListOf()
+
+        when (isFirst) {
+            true -> _page.value = 1
+            false -> _page.value = _page.value?.plus(1)
+        }
+
         service?.let { service ->
-            service.getCafe(query, sort, page, size)
+            _page.value?.let { page ->
+                service.getCafe(query, sort, page, size)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : DisposableSingleObserver<SearchModel>() {
                         override fun onSuccess(t: SearchModel) {
-                            _searchList.value?.apply {
-                                clear()
+                            _query.value = query
+                            _totalCount.value = t.meta.totalCount
 
+                            when (isFirst) {
+                                true -> _isEnd.value = false
+                                false -> _isEnd.value = t.meta.isEnd
+                            }
+
+                            _searchList.value?.apply {
                                 addAll(
-                                        when (_currentSort.value) {
-                                            SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
-                                            else -> t.documents.sortedBy { it.title }
-                                        }
+                                    when (_currentSort.value) {
+                                        SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
+                                        else -> t.documents.sortedBy { it.title }
+                                    }
                                 )
                             }
                             _searchList.notifyObserver()
@@ -129,26 +175,34 @@ class MainViewModel(
                             }
                         }
                     })
+            }
         }
     }
 
     fun getAllData(
-            query: String,
-            sort: String = TYPE_FILTER_ACCURACY,
-            page: Int,
-            size: Int = DEFAULT_PAGE_SIZE
+        query: String,
+        sort: String = TYPE_FILTER_ACCURACY,
+        size: Int = DEFAULT_PAGE_SIZE,
+        isFirst: Boolean
     ) {
+        _isFirst.value = isFirst
+        _searchList.value = arrayListOf()
+
+        when (isFirst) {
+            true -> _page.value = 1
+            false -> _page.value = _page.value?.plus(1)
+        }
+
         service?.let { service ->
-            service.getBlog(query, sort, page, size)
+            _page.value?.let { page ->
+                service.getBlog(query, sort, page, size)
                     .flatMap {
                         _searchList.value?.apply {
-                            clear()
-
                             addAll(
-                                    when (_currentSort.value) {
-                                        SearchSort.DATE_TIME.sort -> it.documents.sortedByDescending { it.datetime }
-                                        else -> it.documents.sortedBy { it.title }
-                                    }
+                                when (_currentSort.value) {
+                                    SearchSort.DATE_TIME.sort -> it.documents.sortedByDescending { it.datetime }
+                                    else -> it.documents.sortedBy { it.title }
+                                }
                             )
                         }
 
@@ -158,13 +212,19 @@ class MainViewModel(
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : DisposableSingleObserver<SearchModel>() {
                         override fun onSuccess(t: SearchModel) {
+                            _query.value = query
+                            _totalCount.value = t.meta.totalCount
+
+                            when (isFirst) {
+                                true -> _isEnd.value = false
+                                false -> _isEnd.value = t.meta.isEnd
+                            }
+
                             _searchList.value?.addAll(
-                                    when (_currentSort.value) {
-                                        SearchSort.DATE_TIME.sort -> {
-                                            t.documents.sortedByDescending { it.datetime }
-                                        }
-                                        else -> t.documents.sortedBy { it.title }
-                                    }
+                                when (_currentSort.value) {
+                                    SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
+                                    else -> t.documents.sortedBy { it.title }
+                                }
                             )
 
                             _searchList.notifyObserver()
@@ -176,6 +236,8 @@ class MainViewModel(
                             }
                         }
                     })
+            }
+
         }
     }
 
@@ -185,7 +247,7 @@ class MainViewModel(
 
     companion object {
         private const val TYPE_FILTER_ACCURACY = "accuracy"
-        private const val DEFAULT_PAGE_SIZE = 25
+        const val DEFAULT_PAGE_SIZE = 25
     }
 
 }

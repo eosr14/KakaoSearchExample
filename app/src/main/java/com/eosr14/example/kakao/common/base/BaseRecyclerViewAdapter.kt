@@ -10,23 +10,24 @@ import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.functions.Consumer
 
 class BaseRecyclerViewAdapter<ITEM : Any, B : ViewDataBinding>(
-    @LayoutRes private val layoutResId: Int,
-    private val bindingVariableId: Int? = null,
-    private val onClickListener: Consumer<ITEM>,
+        @LayoutRes private val layoutResId: Int,
+        private val bindingVariableId: Int? = null,
+        private val onClickListener: Consumer<ITEM>,
 ) : RecyclerView.Adapter<BaseRecyclerViewAdapter.ViewHolder<B>>() {
 
     private var items = ArrayList<ITEM>()
 
-    fun replaceAll(items: List<ITEM>?) {
+    fun setItems(items: List<ITEM>?) {
         items?.let {
-            this.items.clear()
-            this.items.addAll(it)
+            this.items = items as ArrayList<ITEM>
+            notifyDataSetChanged()
         }
     }
 
-    fun bindList(items: List<ITEM>?) {
+    fun pushItems(items: List<ITEM>?) {
         items?.let {
-            this.items = items as ArrayList<ITEM>
+            this.items.addAll(items)
+            notifyItemInserted(this.items.size)
         }
     }
 
@@ -48,8 +49,8 @@ class BaseRecyclerViewAdapter<ITEM : Any, B : ViewDataBinding>(
     }
 
     class ViewHolder<B : ViewDataBinding>(
-        private val bindingVariableId: Int?,
-        view: View
+            private val bindingVariableId: Int?,
+            view: View
     ) : RecyclerView.ViewHolder(view) {
 
         private val binding: B? = DataBindingUtil.bind(itemView)

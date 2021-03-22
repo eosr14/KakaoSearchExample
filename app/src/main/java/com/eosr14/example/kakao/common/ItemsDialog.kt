@@ -20,7 +20,7 @@ import io.reactivex.functions.Consumer
 class ItemsDialog(context: Context) : Dialog(context) {
 
     private var titleStr: String = ""
-    private var items: List<DialogItem>? = null
+    private var items: ArrayList<DialogItem>? = null
     private var selectName: String = ""
     private var onItemCallBack: Consumer<String>? = null
     private var binding: LayoutItemsDialogBinding? = null
@@ -41,10 +41,10 @@ class ItemsDialog(context: Context) : Dialog(context) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = DataBindingUtil.inflate<LayoutItemsDialogBinding>(
-            LayoutInflater.from(context),
-            R.layout.layout_items_dialog,
-            null,
-            false
+                LayoutInflater.from(context),
+                R.layout.layout_items_dialog,
+                null,
+                false
         ).apply {
             setContentView(this.root)
         }
@@ -66,7 +66,7 @@ class ItemsDialog(context: Context) : Dialog(context) {
 
             items?.let {
                 adapter = dialogAdapter
-                dialogAdapter.run { bindList(it) }
+                dialogAdapter.run { setItems(it) }
             }
         }
 
@@ -84,25 +84,25 @@ class ItemsDialog(context: Context) : Dialog(context) {
         }
 
         dialogAdapter.apply {
-            bindList(items)
+            setItems(items)
             notifyDataSetChanged()
         }
     }
 
     private var dialogAdapter = BaseRecyclerViewAdapter<DialogItem, LayoutItemsDialogRowBinding>(
-        layoutResId = R.layout.layout_items_dialog_row,
-        bindingVariableId = BR.dialogItem,
-        onClickListener = {
-            selectName = it.name
-            updateItems()
-        }
+            layoutResId = R.layout.layout_items_dialog_row,
+            bindingVariableId = BR.dialogItem,
+            onClickListener = {
+                selectName = it.name
+                updateItems()
+            }
     )
 
     data class Builder(
-        var titleStr: String = "",
-        var items: ArrayList<DialogItem>? = null,
-        var selectName: String = "",
-        var onItemCallBack: Consumer<String>? = null
+            var titleStr: String = "",
+            var items: ArrayList<DialogItem>? = null,
+            var selectName: String = "",
+            var onItemCallBack: Consumer<String>? = null
     ) {
         fun titleStr(titleStr: String) = apply {
             this.titleStr = titleStr

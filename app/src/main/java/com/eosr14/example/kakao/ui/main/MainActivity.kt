@@ -22,7 +22,6 @@ import com.eosr14.example.kakao.model.Document
 import com.eosr14.example.kakao.network.RetrofitClient
 import com.eosr14.example.kakao.network.services.KaKaoService
 
-
 class MainActivity : BaseActivity() {
 
     private val viewModel: MainViewModel by lazy {
@@ -142,17 +141,17 @@ class MainActivity : BaseActivity() {
                                 when (viewModel.currentFilter.value) {
                                     SearchFilter.ALL.type -> viewModel.getAllData(
                                         query = it.text.toString(),
-                                        page = 1
+                                        isFirst = true
                                     )
 
                                     SearchFilter.BLOG.type -> viewModel.getBlog(
                                         query = it.text.toString(),
-                                        page = 1
+                                        isFirst = true
                                     )
 
                                     SearchFilter.CAFE.type -> viewModel.getCafe(
                                         query = it.text.toString(),
-                                        page = 1
+                                        isFirst = true
                                     )
                                 }
                             }
