@@ -30,8 +30,8 @@ enum class SearchSort(val sort: String) {
 }
 
 class MainViewModel(
-    private val context: Context?,
-    private val service: KaKaoService?
+        private val context: Context?,
+        private val service: KaKaoService?
 ) : BaseViewModel() {
 
     private val _currentFilter = MutableLiveData(SearchFilter.ALL.type)
@@ -65,94 +65,119 @@ class MainViewModel(
     }
 
     fun getBlog(
-        query: String,
-        sort: String = TYPE_FILTER_ACCURACY,
-        page: Int,
-        size: Int = DEFAULT_PAGE_SIZE
+            query: String,
+            sort: String = TYPE_FILTER_ACCURACY,
+            page: Int,
+            size: Int = DEFAULT_PAGE_SIZE
     ) {
         service?.let { service ->
             service.getBlog(query, sort, page, size)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : DisposableSingleObserver<SearchModel>() {
-                    override fun onSuccess(t: SearchModel) {
-                        _searchList.value?.apply {
-                            clear()
-                            addAll(t.documents)
-                        }
-                        _searchList.notifyObserver()
-                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : DisposableSingleObserver<SearchModel>() {
+                        override fun onSuccess(t: SearchModel) {
+                            _searchList.value?.apply {
+                                clear()
 
-                    override fun onError(e: Throwable) {
-                        context?.let {
-                            RxEventBus.sendEvent(ToastEvent(it.getString(R.string.api_failed_message)))
+                                addAll(
+                                        when (_currentSort.value) {
+                                            SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
+                                            else -> t.documents.sortedBy { it.title }
+                                        }
+                                )
+                            }
+                            _searchList.notifyObserver()
                         }
-                    }
-                })
+
+                        override fun onError(e: Throwable) {
+                            context?.let {
+                                RxEventBus.sendEvent(ToastEvent(it.getString(R.string.api_failed_message)))
+                            }
+                        }
+                    })
         }
     }
 
     fun getCafe(
-        query: String,
-        sort: String = TYPE_FILTER_ACCURACY,
-        page: Int,
-        size: Int = DEFAULT_PAGE_SIZE
+            query: String,
+            sort: String = TYPE_FILTER_ACCURACY,
+            page: Int,
+            size: Int = DEFAULT_PAGE_SIZE
     ) {
         service?.let { service ->
             service.getCafe(query, sort, page, size)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : DisposableSingleObserver<SearchModel>() {
-                    override fun onSuccess(t: SearchModel) {
-                        _searchList.value?.apply {
-                            clear()
-                            addAll(t.documents)
-                        }
-                        _searchList.notifyObserver()
-                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : DisposableSingleObserver<SearchModel>() {
+                        override fun onSuccess(t: SearchModel) {
+                            _searchList.value?.apply {
+                                clear()
 
-                    override fun onError(e: Throwable) {
-                        context?.let {
-                            RxEventBus.sendEvent(ToastEvent(it.getString(R.string.api_failed_message)))
+                                addAll(
+                                        when (_currentSort.value) {
+                                            SearchSort.DATE_TIME.sort -> t.documents.sortedByDescending { it.datetime }
+                                            else -> t.documents.sortedBy { it.title }
+                                        }
+                                )
+                            }
+                            _searchList.notifyObserver()
                         }
-                    }
-                })
+
+                        override fun onError(e: Throwable) {
+                            context?.let {
+                                RxEventBus.sendEvent(ToastEvent(it.getString(R.string.api_failed_message)))
+                            }
+                        }
+                    })
         }
     }
 
     fun getAllData(
-        query: String,
-        sort: String = TYPE_FILTER_ACCURACY,
-        page: Int,
-        size: Int = DEFAULT_PAGE_SIZE
+            query: String,
+            sort: String = TYPE_FILTER_ACCURACY,
+            page: Int,
+            size: Int = DEFAULT_PAGE_SIZE
     ) {
         service?.let { service ->
             service.getBlog(query, sort, page, size)
-                .flatMap {
-                    _searchList.value?.apply {
-                        clear()
-                        addAll(it.documents)
-                    }
+                    .flatMap {
+                        _searchList.value?.apply {
+                            clear()
 
-                    return@flatMap service.getCafe(query, sort, page, size)
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : DisposableSingleObserver<SearchModel>() {
-                    override fun onSuccess(t: SearchModel) {
-                        _searchList.value?.addAll(t.documents)
-                        _searchList.notifyObserver()
-                    }
-
-                    override fun onError(e: Throwable) {
-                        context?.let {
-                            RxEventBus.sendEvent(ToastEvent(it.getString(R.string.api_failed_message)))
+                            addAll(
+                                    when (_currentSort.value) {
+                                        SearchSort.DATE_TIME.sort -> it.documents.sortedByDescending { it.datetime }
+                                        else -> it.documents.sortedBy { it.title }
+                                    }
+                            )
                         }
+
+                        return@flatMap service.getCafe(query, sort, page, size)
                     }
-                })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : DisposableSingleObserver<SearchModel>() {
+                        override fun onSuccess(t: SearchModel) {
+                            _searchList.value?.addAll(
+                                    when (_currentSort.value) {
+                                        SearchSort.DATE_TIME.sort -> {
+                                            t.documents.sortedByDescending { it.datetime }
+                                        }
+                                        else -> t.documents.sortedBy { it.title }
+                                    }
+                            )
+
+                            _searchList.notifyObserver()
+                        }
+
+                        override fun onError(e: Throwable) {
+                            context?.let {
+                                RxEventBus.sendEvent(ToastEvent(it.getString(R.string.api_failed_message)))
+                            }
+                        }
+                    })
         }
     }
-
 
     fun onClickSearch() = RxEventBus.sendEvent(OnClickSearchEvent())
 
