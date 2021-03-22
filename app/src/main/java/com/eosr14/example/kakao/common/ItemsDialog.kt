@@ -41,10 +41,10 @@ class ItemsDialog(context: Context) : Dialog(context) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         binding = DataBindingUtil.inflate<LayoutItemsDialogBinding>(
-                LayoutInflater.from(context),
-                R.layout.layout_items_dialog,
-                null,
-                false
+            LayoutInflater.from(context),
+            R.layout.layout_items_dialog,
+            null,
+            false
         ).apply {
             setContentView(this.root)
         }
@@ -90,19 +90,19 @@ class ItemsDialog(context: Context) : Dialog(context) {
     }
 
     private var dialogAdapter = BaseRecyclerViewAdapter<DialogItem, LayoutItemsDialogRowBinding>(
-            layoutResId = R.layout.layout_items_dialog_row,
-            bindingVariableId = BR.dialogItem,
-            onClickListener = {
-                selectName = it.name
-                updateItems()
-            }
+        layoutResId = R.layout.layout_items_dialog_row,
+        bindingVariableId = BR.dialogItem,
+        onClickListener = { item, _ ->
+            selectName = item.name
+            updateItems()
+        }
     )
 
     data class Builder(
-            var titleStr: String = "",
-            var items: ArrayList<DialogItem>? = null,
-            var selectName: String = "",
-            var onItemCallBack: Consumer<String>? = null
+        var titleStr: String = "",
+        var items: ArrayList<DialogItem>? = null,
+        var selectName: String = "",
+        var onItemCallBack: Consumer<String>? = null
     ) {
         fun titleStr(titleStr: String) = apply {
             this.titleStr = titleStr

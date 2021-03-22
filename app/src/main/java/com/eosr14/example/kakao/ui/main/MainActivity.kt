@@ -1,5 +1,6 @@
 package com.eosr14.example.kakao.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -10,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.library.baseAdapters.BR
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.eosr14.example.kakao.R
+import com.eosr14.example.kakao.common.AndroidScheduler
 import com.eosr14.example.kakao.common.ItemsDialog
 import com.eosr14.example.kakao.common.base.BaseActivity
 import com.eosr14.example.kakao.common.base.BaseRecyclerViewAdapter
@@ -21,13 +23,15 @@ import com.eosr14.example.kakao.model.DialogItem
 import com.eosr14.example.kakao.model.Document
 import com.eosr14.example.kakao.network.RetrofitClient
 import com.eosr14.example.kakao.network.services.KaKaoService
+import com.eosr14.example.kakao.ui.detail.DetailActivity
 
 class MainActivity : BaseActivity() {
 
     private val viewModel: MainViewModel by lazy {
         MainViewModel(
             this@MainActivity,
-            RetrofitClient.getInstance()?.create(KaKaoService::class.java)
+            RetrofitClient.getInstance()?.create(KaKaoService::class.java),
+            AndroidScheduler(),
         ).inject(this)
     }
 
@@ -36,9 +40,11 @@ class MainActivity : BaseActivity() {
     private var documentAdapter = BaseRecyclerViewAdapter<Document, LayoutItemsSearchBinding>(
         layoutResId = R.layout.layout_items_search,
         bindingVariableId = BR.document,
-        onClickListener = {
+        onClickListener = { document, position ->
+            DetailActivity.startActivityForResult(this@MainActivity, document, position)
         }
     )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +69,21 @@ class MainActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         clearDisposable()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            DetailActivity.RESULT_URL_CLICK -> {
+                data?.let { intentData ->
+                    intentData.getIntExtra(DetailActivity.KEY_POSITION, -1).let { position ->
+                        if (position != -1) {
+                            viewModel.setListWithDim(position)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun bindView() {
@@ -129,14 +150,14 @@ class MainActivity : BaseActivity() {
 
                         is OnClickSearchEvent -> {
                             binding?.edittextMainSearch?.let {
-                                if (it.text.toString().isEmpty()) {
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        getString(R.string.main_search_term_empty),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    return@subscribe
-                                }
+//                                if (it.text.toString().isEmpty()) {
+//                                    Toast.makeText(
+//                                        this@MainActivity,
+//                                        getString(R.string.main_search_term_empty),
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                    return@subscribe
+//                                }
 
                                 when (viewModel.currentFilter.value) {
                                     SearchFilter.ALL.type -> viewModel.getAllData(

@@ -9,7 +9,19 @@ fun String.convertDisplayDate(): String {
     return if (this.isEmpty()) {
         ""
     } else {
-        return SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(this.convertIsoDate())
+        this.convertIsoDate()?.let {
+            return SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(it)
+        } ?: ""
+    }
+}
+
+fun String?.convertDisplayDetailDate(): String {
+    return if (this.isNullOrEmpty()) {
+        ""
+    } else {
+        this.convertIsoDate()?.let {
+            return SimpleDateFormat("yyyy년 MM월 dd일 a hh시 mm분", Locale.getDefault()).format(it)
+        } ?: ""
     }
 }
 

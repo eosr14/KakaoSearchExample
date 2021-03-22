@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.eosr14.example.kakao.R
+import com.eosr14.example.kakao.common.SchedulerProvider
 import com.eosr14.example.kakao.common.base.BaseViewModel
 import com.eosr14.example.kakao.common.event.OnClickSearchEvent
 import com.eosr14.example.kakao.common.event.OnClickSortDialogEvent
@@ -13,9 +14,7 @@ import com.eosr14.example.kakao.common.extension.notifyObserver
 import com.eosr14.example.kakao.model.Document
 import com.eosr14.example.kakao.model.SearchModel
 import com.eosr14.example.kakao.network.services.KaKaoService
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
 
 
 enum class SearchFilter(val type: String) {
@@ -31,7 +30,8 @@ enum class SearchSort(val sort: String) {
 
 class MainViewModel(
     private val context: Context?,
-    private val service: KaKaoService?
+    private val service: KaKaoService?,
+    private val schedulerProvider: SchedulerProvider,
 ) : BaseViewModel() {
 
     private val _currentFilter = MutableLiveData(SearchFilter.ALL.type)
@@ -96,8 +96,8 @@ class MainViewModel(
         service?.let { service ->
             _page.value?.let { page ->
                 service.getBlog(query, sort, page, size)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(schedulerProvider.io())
+                    .observeOn(schedulerProvider.ui())
                     .subscribe(object : DisposableSingleObserver<SearchModel>() {
                         override fun onSuccess(t: SearchModel) {
                             _query.value = query
@@ -146,8 +146,8 @@ class MainViewModel(
         service?.let { service ->
             _page.value?.let { page ->
                 service.getCafe(query, sort, page, size)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(schedulerProvider.io())
+                    .observeOn(schedulerProvider.ui())
                     .subscribe(object : DisposableSingleObserver<SearchModel>() {
                         override fun onSuccess(t: SearchModel) {
                             _query.value = query
@@ -208,8 +208,8 @@ class MainViewModel(
 
                         return@flatMap service.getCafe(query, sort, page, size)
                     }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(schedulerProvider.io())
+                    .observeOn(schedulerProvider.ui())
                     .subscribe(object : DisposableSingleObserver<SearchModel>() {
                         override fun onSuccess(t: SearchModel) {
                             _query.value = query
@@ -239,6 +239,15 @@ class MainViewModel(
             }
 
         }
+    }
+
+    fun setListWithDim(position: Int) {
+        _searchList.value?.forEachIndexed { index, document ->
+            if (position == index) {
+                document.isDim = true
+            }
+        }
+        _searchList.notifyObserver()
     }
 
     fun onClickSearch() = RxEventBus.sendEvent(OnClickSearchEvent())
