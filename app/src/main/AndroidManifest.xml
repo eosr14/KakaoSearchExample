@@ -13,8 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KakaoSearchExample">
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.terms.TermsActivity"
             android:label="@string/app_name"
+            android:exported="true"
             android:theme="@style/Theme.KakaoSearchExample.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.detail.DetailActivity" />
+        <activity android:name=".ui.main.MainActivity" />
     </application>
 
 </manifest>

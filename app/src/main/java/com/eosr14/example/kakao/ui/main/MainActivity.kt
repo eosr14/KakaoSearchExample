@@ -41,7 +41,8 @@ class MainActivity : BaseActivity() {
         layoutResId = R.layout.layout_items_search,
         bindingVariableId = BR.document,
         onClickListener = { document, position ->
-            DetailActivity.startActivityForResult(this@MainActivity, document, position)
+//            DetailActivity.startActivityForResult(this@MainActivity, document, position)
+//            startActivity(Intent(this, DetailActivityTest::class.java))
         }
     )
 

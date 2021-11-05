@@ -13,6 +13,7 @@ import com.eosr14.example.kakao.common.extension.convertDisplayDate
 import com.eosr14.example.kakao.common.extension.convertIsoDate
 import com.eosr14.example.kakao.common.extension.isToday
 import com.eosr14.example.kakao.common.extension.isYesterday
+import com.eosr14.example.kakao.model.Terms
 import com.eosr14.example.kakao.ui.main.MainViewModel
 import com.eosr14.example.kakao.ui.main.MainViewModel.Companion.DEFAULT_PAGE_SIZE
 import com.eosr14.example.kakao.ui.main.SearchFilter
@@ -69,7 +70,10 @@ object DataBindingComponents {
 
                 if (!recyclerView.canScrollVertically(1) && page < totalCount && !isEnd) {
                     when (filterType) {
-                        SearchFilter.ALL.type -> viewModel.getAllData(query = query, isFirst = false)
+                        SearchFilter.ALL.type -> viewModel.getAllData(
+                            query = query,
+                            isFirst = false
+                        )
                         SearchFilter.BLOG.type -> viewModel.getBlog(query = query, isFirst = false)
                         SearchFilter.CAFE.type -> viewModel.getCafe(query = query, isFirst = false)
                     }
@@ -130,6 +134,13 @@ object DataBindingComponents {
                 this.build()
             }
         }
+    }
+
+    @JvmStatic
+    @BindingAdapter("termsContents")
+    fun setTermsContents(view: TextView, item: Terms) {
+        val requiredMessage = if (item.isRequired) "[필수]" else "[선택]"
+        view.text = "$requiredMessage ${item.content}"
     }
 
 }

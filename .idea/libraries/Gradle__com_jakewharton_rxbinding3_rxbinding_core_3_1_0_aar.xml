@@ -4,6 +4,10 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bc8cd92e4f520ac5cd4d1998d789732a/rxbinding-core-3.0.0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bc8cd92e4f520ac5cd4d1998d789732a/rxbinding-core-3.0.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bc8cd92e4f520ac5cd4d1998d789732a/rxbinding-core-3.0.0/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/645b455e6e4e9edc1423244b50055bcc/transformed/rxbinding-core-3.1.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c52802c191b6457a5aadf73aeeac20a2/transformed/rxbinding-core-3.1.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/c52802c191b6457a5aadf73aeeac20a2/transformed/rxbinding-core-3.1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c52802c191b6457a5aadf73aeeac20a2/transformed/rxbinding-core-3.1.0/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jakewharton.rxbinding3/rxbinding-core/3.1.0/fb469d33f4cb8dbcd7b8c80c13a226d5b6d6a7e8/rxbinding-core-3.1.0-javadoc.jar!/" />
