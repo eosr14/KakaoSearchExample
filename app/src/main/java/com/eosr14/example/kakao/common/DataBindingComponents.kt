@@ -4,6 +4,7 @@ import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Build
 import android.text.Html
+import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -106,6 +107,19 @@ object DataBindingComponents {
     }
 
     @JvmStatic
+    @BindingAdapter("isSelected")
+    fun setSelected(view: View, isSelected: Boolean) {
+        view.isSelected = isSelected
+    }
+
+    @JvmStatic
+    @BindingAdapter("isSelectedTest")
+    fun setSelectedTest(view: View, isSelected: Boolean) {
+        android.util.Log.d("eosr14", "isSelectedTest 111 = $isSelected")
+        view.isSelected = isSelected
+    }
+
+    @JvmStatic
     @BindingAdapter("urlToImage")
     fun setUrlToImage(view: SimpleDraweeView, url: String?) {
         url?.let {
@@ -140,7 +154,7 @@ object DataBindingComponents {
     @BindingAdapter("termsContents")
     fun setTermsContents(view: TextView, item: Terms) {
         val requiredMessage = if (item.isRequired) "[필수]" else "[선택]"
-        view.text = "$requiredMessage ${item.content}"
+        view.text = "$requiredMessage ${item.termsTitle}"
     }
 
 }

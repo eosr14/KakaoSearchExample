@@ -24,7 +24,7 @@ class TermsActivity : BaseActivity() {
         layoutResId = R.layout.layout_items_term,
         bindingVariableId = BR.terms,
         onClickListener = { terms, position ->
-            viewModel.onClickTermsItem()
+            viewModel.onClickTermsItem(terms, position)
         }
     )
 

@@ -15,11 +15,12 @@
         android:layout_height="wrap_content"
         android:padding="15dp">
 
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/cb_terms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="@={terms.isChecked}"
+        <ImageView
+            android:id="@+id/iv_terms"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/selector_terms_box"
+            app:isSelectedTest="@{terms.isChecked}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,11 +30,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            app:termsContents="@{terms}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_terms"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/cb_terms"
+            app:termsContents="@{terms}"
             tools:text="네네" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
